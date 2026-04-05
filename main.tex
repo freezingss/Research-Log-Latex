@@ -43,7 +43,7 @@
 	The multinomial distribution provides a natural model for such data, but direct estimation is computationally prohibitive when $Q$ is large. Taddy (2015) addressed this through the Distributed Multinomial Regression (DMR) framework, which exploits the exact Poisson–Multinomial factorisation
 	
 	\begin{equation}
-		\prod_{q=1}^{Q}P(z_{q};\mu_{q})=P(S;\sum_{q}\mu_{q})\cdot M(z;p,S)
+		\prod_{q=1}^{Q}\mathcal{P}(z_{q};\mu_{q})=\mathcal{P}(S;\sum_{q}\mu_{q})\cdot \mathcal{M}(z;p,S)
 	\end{equation}
 	to decompose the multinomial regression into $Q$ independent Poisson regressions that can be solved in parallel. Lee, Green and Ryan (2017) extended DMR to grouped data by introducing group-level random effects $\lambda_{j}$, accommodating within-group dependence while retaining the Poisson surrogate structure. However, their model assumes $\lambda_{jq}$ to be independent across categories $q$, which rules out the cross-category correlation that is pervasive in high-dimensional settings. 
 
@@ -74,17 +74,17 @@ denoting the observation-level total, the group-category total and the group-lev
 	
 	\subsection{The Poisson-Multinomial Equivalence}
 	\begin{lemma}[Poisson-Multinomial Factorisation]\label{PMF}
-		Let $Z_{1},\dots ,Z_{Q}$ be independent with $Z_{q}\sim P(\mu_{q})$ for $q=1,2,\dots ,Q$, where $\mu_{q}>0$. Define $S=\sum_{q=1}^{Q}Z_{q}$ and the probability vector $p=(\frac{\mu_1}{\mu_{+}},\dots ,\frac{\mu_Q}{\mu_{+}})^{T}$, where $\mu_{+}=\sum_{q=1}^{Q}\mu_{q}$.Then the joint distribution of $(Z_{1},\dots,Z_{Q})$ factorises exactly as:
+		Let $Z_{1},\dots ,Z_{Q}$ be independent with $Z_{q}\sim \mathcal{P}(\mu_{q})$ for $q=1,2,\dots ,Q$, where $\mu_{q}>0$. Define $S=\sum_{q=1}^{Q}Z_{q}$ and the probability vector $p=(\frac{\mu_1}{\mu_{+}},\dots ,\frac{\mu_Q}{\mu_{+}})^{T}$, where $\mu_{+}=\sum_{q=1}^{Q}\mu_{q}$.Then the joint distribution of $(Z_{1},\dots,Z_{Q})$ factorises exactly as:
 		\begin{equation}
-			p(Z_{1}=z_{1},\dots ,Z_{Q}=z_{Q})=P(S=s;\mu_{+})\cdot M(z;p,s)
+			p(Z_{1}=z_{1},\dots ,Z_{Q}=z_{Q})=\mathcal{P}(S=s;\mu_{+})\cdot \mathcal{M}(z;p,s)
 		\end{equation}
-		where $s=\sum_{q=1}^{Q}z_{q}$, $P(\sim ;\mu_{+})$ denotes the Poisson probability mass function with poisson parameter $\mu_{+}$ and $M(\sim ;p,s)$ denotes the multinomial probability mass function given total $s$ and probability vector $p$.
+		where $s=\sum_{q=1}^{Q}z_{q}$, $\mathcal{P}(\sim ;\mu_{+})$ denotes the Poisson probability mass function with poisson parameter $\mu_{+}$ and $\mathcal{M}(\sim ;p,s)$ denotes the multinomial probability mass function given total $s$ and probability vector $p$.
 	\end{lemma}
 	
 	\begin{proof}
-		Since $Z_{1},\dots ,Z_{Q}$ are independent with $Z_{q}\sim P(\mu_{q})$, by direct computation:
+		Since $Z_{1},\dots ,Z_{Q}$ are independent with $Z_{q}\sim \mathcal{P}(\mu_{q})$, by direct computation:
 		\begin{equation}
-			\prod_{q=1}^{Q} \frac{e^{-\mu_{q}}\mu_{q}^{z_{q}}}{z_{q}!}=e^{-\mu_{+}}\cdot \frac{\mu_{+}^{s}}{s!}\cdot \frac{s!}{\prod_{q=1}^{Q}z_{q}!} \prod_{q=1}^{Q}(\frac{\mu_{q}}{\mu_{+}})^{z_{q}}= P(s;\mu_{+})\cdot M(z;p,s).
+			\prod_{q=1}^{Q} \frac{e^{-\mu_{q}}\mu_{q}^{z_{q}}}{z_{q}!}=e^{-\mu_{+}}\cdot \frac{\mu_{+}^{s}}{s!}\cdot \frac{s!}{\prod_{q=1}^{Q}z_{q}!} \prod_{q=1}^{Q}(\frac{\mu_{q}}{\mu_{+}})^{z_{q}}= \mathcal{P}(s;\mu_{+})\cdot\mathcal{M}(z;p,s).
 		\end{equation}
 	\end{proof}
 	
@@ -95,7 +95,7 @@ denoting the observation-level total, the group-category total and the group-lev
 	\subsection{Conditional Model Given Random Effects}
 	To discuss with-in group dependence, we introduce a Q-dimensional vector of group-specific random effects $\lambda_{j}=(\lambda_{j1},\dots ,\lambda_{jQ})^{T}$, where $\lambda_{jq}>0$ represents the multiplicative deviation of group $j$'s baseline intensity for category $q$ from the population average. Conditional on $\lambda_{j}$, we assume that all counts within group $j$ are independent:
 	\begin{equation}\label{conditional}
-		Y_{ijq}|\lambda_{j} \sim P(\delta_{ij}\lambda_{jq}\zeta_{ijq}), i=i,\dots ,n_{j}, q=1,\dots ,Q
+		Y_{ijq}|\lambda_{j} \sim \mathcal{P}(\delta_{ij}\lambda_{jq}\zeta_{ijq}), i=i,\dots ,n_{j}, q=1,\dots ,Q
 	\end{equation}
 where the fixed-effect component of the conditional mean is:
 	\begin{equation}
@@ -105,16 +105,16 @@ and $\phi_{q}\in \mathbb{R}^{p}$ is a vector of regression coefficients for cate
 	\begin{remark}[Conditional Poisson-Multinomial Equivalence]
 		By Lemma \ref{PMF} applied conditionally, model \ref{conditional} implies that:
 		\begin{equation}
-			Y_{ij}|Y_{ij+}, \lambda_{j}\sim M(Y_{ij+},p_{ij}), \text{ where } p_{ijq}=\dfrac{\lambda_{jq}\zeta_{ijq}}{\sum_{q=1}^{Q}\lambda_{jq}\zeta_{ijq}}
+			Y_{ij}|Y_{ij+}, \lambda_{j}\sim  \mathcal{M}(Y_{ij+},p_{ij}), \text{ where } p_{ijq}=\dfrac{\lambda_{jq}\zeta_{ijq}}{\sum_{q=1}^{Q}\lambda_{jq}\zeta_{ijq}}
 		\end{equation}
 	\end{remark}
     Given the random effects, we treat $Y_{ij+}$ as random and assume 
 		\begin{equation}
-			Y_{ij+}|\lambda_{j}\sim P(\delta_{ij}\sum_{q=1}^{Q}\lambda_{jq}\zeta_{ijq}).
+			Y_{ij+}|\lambda_{j}\sim \mathcal{P}(\delta_{ij}\sum_{q=1}^{Q}\lambda_{jq}\zeta_{ijq}).
 		\end{equation}
 independently for each $i$ and $j$. This gives
 \begin{equation}
-Y_{ijq}|\lambda_{jq}\sim P(\delta_{ij}\lambda_{jq}\zeta_{ijq}),
+Y_{ijq}|\lambda_{jq}\sim \mathcal{P}(\delta_{ij}\lambda_{jq}\zeta_{ijq}),
 \end{equation}
 independently for each $j$ and $q$. Now the relationship of likelihood between multinomial and poisson models satisfies 
 \begin{equation}\label{ori_likelihood}
@@ -124,9 +124,9 @@ independently for each $j$ and $q$. Now the relationship of likelihood between m
 \begin{equation}
     L^{\mathcal{M}} = \prod_{j} \int \cdots \int \prod_{i} \left\{ \frac{y_{ij+}!}{\prod_{q} y_{ijq}!} \prod_{q} \left( \frac{\lambda_{jq} \zeta_{ijq}}{\sum_{q=1}^{Q} \lambda_{jq} \zeta_{ijq}} \right)^{y_{ijq}} \right\} \times \prod_{q} \frac{\beta_{q}^{\alpha_q} \lambda_{jq}^{\alpha_q - 1} e^{-\beta_q \lambda_{jq}}}{\Gamma(\alpha_q)} \, \mathrm{d}\lambda_{j1} \cdots \mathrm{d}\lambda_{jQ}.
 \end{equation}
-which does not generally exhibit a closed-form solution regardless of the random effect distribution. On the other hand, the marginal likelihood of the poisson surrogate model can be expressed in closed-form
+which does not generally exhibit a closed-form solution regardless of the random effect distribution. On the other hand, the marginal likelihood of the Poisson surrogate model can be expressed in closed-form
 \begin{align}
-    L^{P} &= \prod_{i} \left\{ \int \cdots \int \prod_{j} \prod_{q} \frac{e^{-\delta_{ij} \lambda_{iq} \zeta_{ijq}} (\delta_{ij} \lambda_{iq} \zeta_{ijq})^{y_{ijq}}}{y_{ijq}!} \prod_{q} \frac{\beta_{q}^{\alpha_q} \lambda_{iq}^{\alpha_q - 1} e^{-\beta_q \lambda_{iq}}}{\Gamma(\alpha_q)} \, \mathrm{d}\lambda_{i1} \cdots \mathrm{d}\lambda_{iQ} \right\} \nonumber \\
+    L^{\mathcal{P}} &= \prod_{i} \left\{ \int \cdots \int \prod_{j} \prod_{q} \frac{e^{-\delta_{ij} \lambda_{iq} \zeta_{ijq}} (\delta_{ij} \lambda_{iq} \zeta_{ijq})^{y_{ijq}}}{y_{ijq}!} \prod_{q} \frac{\beta_{q}^{\alpha_q} \lambda_{iq}^{\alpha_q - 1} e^{-\beta_q \lambda_{iq}}}{\Gamma(\alpha_q)} \, \mathrm{d}\lambda_{i1} \cdots \mathrm{d}\lambda_{iQ} \right\} \nonumber \\
     &= \prod_{i} \left\{ \prod_{q} \frac{\Gamma(\alpha_q + y_{i+q}) \beta_{q}^{\alpha_q}}{\Gamma(\alpha_q)(\beta_q + \sum_{j} \delta_{ij} \zeta_{ijq})^{\alpha_q + y_{i+q}}} \times \prod_{j} \prod_{q} \frac{(\delta_{ij} \zeta_{ijq})^{y_{ijq}}}{y_{ijq}!} \right\}.
 \end{align}
 
@@ -139,22 +139,22 @@ which does not generally exhibit a closed-form solution regardless of the random
 \end{comment}
   
 	\subsection{Factor-Structured Random Effects}
-	The cross-category correlation is driven by common latent factors rather than being independently determined for each category. We proposes a factor-structured random effects model of $\lambda_{j}$ across groups. Under the independence assumption of Lee et al.(2017), $\lambda_{jq}$ are independent across $q$, so the cross-category covariance of $\lambda_{j}$ is diagonal. This assumption becomes increasingly restrictive as $Q$ grows, since it rules out the systematic co-variation of preferences across categories that is typical in high-dimensional count data. We relax this assumption by modelling the log-transformed random effects through a latent factor model:
+	The cross-category correlation is driven by common latent factors rather than being independently determined for each category. We proposes a factor-structured random effects model of $\boldsymbol{\lambda}_{j}$ across groups. Under the independence assumption of Lee et al.(2017), $\lambda_{jq}$ are independent across $q$, so the cross-category covariance of $\boldsymbol{\lambda}_{j}$ is diagonal. This assumption becomes increasingly restrictive as $Q$ grows, since it rules out the systematic co-variation of preferences across categories that is typical in high-dimensional count data. We relax this assumption by modelling the log-transformed random effects through a latent factor model:
 	\begin{equation}
-		\log \lambda_{j}=\mu+Bf_{j}+\epsilon_{j}
+		\log \boldsymbol{\lambda}_{j}=\boldsymbol{\mu}+\mathbf{B}\boldsymbol{f}_{j}+\boldsymbol{\epsilon}_{j}
 	\end{equation}
-	where the components are defined as follows. The vector $\mu=(\mu_{1},\dots ,\mu_{Q})^{T}\in \mathbb{R}^{Q}$ denotes the population-level baseline log-intensities for each category, the matrix $\mathbf{B}=[b_{1},\dots ,b_{K}]\in \mathbb{R}^{Q\times K}$ is the factor loading matrix with $K\ll Q$ and its entries $B_{qk}$ denote the sensitivity of category $q$'s random effect to the $k$-th latent factor. The vector $f_{j}\in \mathbb{R}^{K}$ denotes the group-specific latent factor scores assumed as follows, distributed identically and independently:
+	where the components are defined as follows. The vector $\boldsymbol{\mu}=(\mu_{1},\dots ,\mu_{Q})^{T}\in \mathbb{R}^{Q}$ denotes the population-level baseline log-intensities for each category, the matrix $\mathbf{B}=[\boldsymbol{b}_{1},\dots ,\boldsymbol{b}_{K}]\in \mathbb{R}^{Q\times K}$ is the factor loading matrix with $K\ll Q$ and its entries $\mathbf{B}_{qk}$ denote the sensitivity of category $q$'s random effect to the $k$-th latent factor. The vector $\boldsymbol{f}_{j}\in \mathbb{R}^{K}$ denotes the group-specific latent factor scores assumed as follows, distributed identically and independently:
 	\begin{equation}
-		f_{j}\sim N_{K}(0,I_{K})
+		\boldsymbol{f}_{j}\sim \mathcal{N}_{K}(0,\mathbf{I}_{K})
 	\end{equation}
 	
-	The vector $\epsilon_{j}\in \mathbb{R}^{Q}$ denotes the error term capturing category-specific variation in $\lambda_{j}$ that is not attributable to the K common factors:
+	The vector $\boldsymbol{\epsilon}_{j}\in \mathbb{R}^{Q}$ denotes the error term capturing category-specific variation in $\boldsymbol{\lambda}_{j}$ that is not attributable to the K common factors:
 	\begin{equation}
-		\epsilon_{j}\sim N_{Q}(0,D), \quad D=\text{diag}(d_{1}^{2},\dots d_{Q}^{2})
+		\boldsymbol{\epsilon}_{j}\sim \mathcal{N}_{Q}(0,\mathbf{D}), \quad \mathbf{D}=\text{diag}(d_{1}^{2},\dots d_{Q}^{2})
 	\end{equation} 
-	with $f_{j}\perp \epsilon_{j}$ for all $j$. Then the marginal distribution of $\log \lambda_{j}$ is:
+	with $\boldsymbol{f}_{j}\perp \boldsymbol{\epsilon}_{j}$ for all $j$. Then the marginal distribution of $\log \boldsymbol{\lambda}_{j}$ is:
 	\begin{equation}
-		\log \lambda_{j}\sim N_{Q}(\mu, \Sigma),\quad \Sigma=BB^{T}+D
+		\log \boldsymbol{\lambda}_{j}\sim \mathcal{N}_{Q}(\boldsymbol{\mu}, \boldsymbol{\Sigma}),\quad \boldsymbol{\Sigma}=\mathbf{B}\mathbf{B}^{T}+\mathbf{D}
 	\end{equation}
     \begin{proof}
     The latent factor model given $f_{j}$ contains only one random variable $\epsilon_{j}$, that is, 
